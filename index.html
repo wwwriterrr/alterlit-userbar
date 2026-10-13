@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Alterlit — блок пользователя (dev)</title>
+    <!-- на сайте эти шрифты уже подключены -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Abril+Fatface&family=PT+Serif:ital,wght@0,400;0,700;1,400;1,700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      /* имитация боковой панели сайта */
+      :root { --aside-width: 350px; }
+      body { margin: 0; background: #fdf8ef; font-family: 'PT Serif', Helvetica, sans-serif; font-size: 14px; }
+      .side { box-sizing: border-box; width: var(--aside-width); min-height: 100vh; margin-left: auto; padding: 10px 30px; background: #203019; }
+      @media (max-width: 1300px) { :root { --aside-width: 280px; } .side { padding: 10px 16px; } }
+      /* на сайте ниже 1024px сайдбар выезжает по кнопке меню; в dev он просто открыт */
+      @media (max-width: 1024px) { :root { --aside-width: 0px; } .side { width: 300px; } }
+      @media (max-width: 600px) { .side { width: 100%; } }
+    </style>
+  </head>
+  <body>
+    <aside class="side">
+      <!-- в dev ссылки ведут на боевой сайт -->
+      <div id="alterlit-userbar" data-site="https://alterlit.ru"></div>
+    </aside>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

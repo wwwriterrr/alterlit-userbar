@@ -1,0 +1,223 @@
+/* Окно уведомлений: справа на всю высоту поверх сайдбара — как старый #notif сайта.
+   Живёт в body (портал), поэтому все стили заданы явно, без опоры на сайдбар. */
+.backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  background: rgba(0, 0, 0, 0.25);
+}
+.panel {
+  --bg: #203019;
+  --amber: #e9aa44;
+  box-sizing: border-box;
+  position: fixed;
+  z-index: 101;
+  top: 0;
+  right: 0;
+  display: flex;
+  flex-direction: column;
+  /* ширина сайдбара сайта; без переменной — как на широком экране */
+  width: var(--aside-width, 350px);
+  height: 100%;
+  padding: 16px 0 0 20px;
+  background: var(--bg);
+  color: #fff;
+  font: 14px/1.4 'PT Serif', Helvetica, sans-serif;
+  text-align: left;
+  outline: none;
+  box-shadow: -8px 0 30px rgba(0, 0, 0, 0.35);
+  animation: slide 0.2s ease-out;
+}
+.panel *,
+.panel *::before,
+.panel *::after {
+  box-sizing: inherit;
+}
+@keyframes slide {
+  from {
+    opacity: 0;
+    transform: translateX(24px);
+  }
+}
+
+.head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding-right: 10px;
+}
+.title {
+  margin: 0;
+  padding: 0;
+  color: #fff;
+  font: normal 1.3em/1.2 'PT Serif', Helvetica, sans-serif;
+  text-align: left;
+}
+.close {
+  display: flex;
+  flex: none;
+  width: 36px;
+  height: 36px;
+  padding: 8px;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: #fff;
+  cursor: pointer;
+}
+.close:hover,
+.close:focus-visible {
+  background: rgba(255, 255, 255, 0.1);
+}
+.close svg {
+  width: 100%;
+  height: 100%;
+}
+
+.panel a.all {
+  align-self: flex-start;
+  margin: 6px 0 14px;
+  color: #fff;
+  font-size: 0.95em;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.panel a.all:hover {
+  color: var(--amber);
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  flex: 1;
+  min-height: 0;
+  padding: 0 15px 20px 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+/* ── карточка ── */
+.card {
+  flex: none;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: #8a8a8a;
+}
+.card[data-tone='success'] {
+  background: #5f9865;
+}
+.card[data-tone='error'] {
+  background: #ae6961;
+}
+.card[data-tone='support'] {
+  background: #316caa;
+}
+.card[data-tone='moderation'] {
+  background: #388ca6;
+}
+.card[data-tone='money'] {
+  background: #8a3dd7 linear-gradient(45deg, #4ab7b7, #b02ed5);
+}
+.card[data-tone='post'] {
+  background: #cc9131;
+}
+.card[data-tone='comment'] {
+  background: #9fb749;
+}
+.card[data-tone='mention'] {
+  background: #919d64;
+}
+.meta {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 2px 10px;
+  font-size: 0.85em;
+}
+.label {
+  font-weight: bold;
+}
+.date {
+  opacity: 0.65;
+}
+.content {
+  margin-top: 6px;
+  white-space: pre-line;
+  overflow-wrap: anywhere;
+}
+.content p {
+  margin: 0 0 0.4em;
+}
+.content p:last-child {
+  margin-bottom: 0;
+}
+.content a {
+  color: #fff;
+  text-decoration: underline;
+}
+
+.note {
+  opacity: 0.6;
+}
+.retry {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: #fff;
+  font: inherit;
+  text-decoration: underline;
+  cursor: pointer;
+}
+.panel a.more {
+  align-self: flex-start;
+  color: #fff;
+  opacity: 0.7;
+  font-size: 0.9em;
+  text-decoration: underline;
+}
+
+/* ── загрузка ── */
+.loader {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.ghostCard {
+  display: block;
+  height: 74px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.12);
+  animation: ghost 1.4s ease-in-out infinite;
+}
+@keyframes ghost {
+  50% {
+    opacity: 0.5;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .panel,
+  .ghostCard {
+    animation: none;
+  }
+}
+
+/* сайт прячет сайдбар за кнопку меню: он выезжает справа на 300px… */
+@media (max-width: 1024px) {
+  .panel {
+    width: 300px;
+  }
+}
+/* …а на телефоне — на весь экран */
+@media (max-width: 600px) {
+  .panel {
+    width: 100%;
+    padding-left: 16px;
+    box-shadow: none;
+  }
+  .title {
+    font-size: 1.4em;
+  }
+}
