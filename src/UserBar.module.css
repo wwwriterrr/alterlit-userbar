@@ -158,16 +158,28 @@
 .balanceLabel {
   opacity: 0.5;
 }
-/* литы слева, буки справа — одинаковые размер и цвет */
+/* литы / буки — одинаковые размер и цвет, одной ссылкой на финансы */
 .amounts {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  justify-content: space-between;
-  gap: 4px 14px;
+  align-self: flex-start;
+  gap: 4px 8px;
+}
+.slash {
+  font-size: 1.4em;
+  line-height: 1;
+  opacity: 0.35;
+}
+.root a.amounts:hover .lits,
+.root a.amounts:hover .books {
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 4px;
 }
 .lits,
 .books {
+  position: relative;
   display: inline-flex;
   align-items: center;
   gap: 2px;
@@ -250,7 +262,50 @@
   font-size: 0.9em;
 }
 
+/* разница после пополнения или списания: всплывает над суммой и тает */
+.delta {
+  position: absolute;
+  left: 0;
+  bottom: 100%;
+  padding: 1px 6px;
+  border-radius: 8px;
+  background: #5f9865;
+  color: #fff;
+  font-size: 0.8em;
+  font-weight: bold;
+  line-height: 1.4;
+  white-space: nowrap;
+  pointer-events: none;
+  animation: delta 2.6s ease-out forwards;
+}
+.delta[data-sign='minus'] {
+  background: #ae6961;
+}
+@keyframes delta {
+  0% {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  12%,
+  70% {
+    opacity: 1;
+    transform: translateY(-2px);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes delta-fade {
+  to {
+    opacity: 0;
+  }
+}
 @media (prefers-reduced-motion: reduce) {
+  .delta {
+    animation: delta-fade 2.6s step-end forwards;
+  }
   .counter[data-pulse],
   .ghost {
     animation: none;

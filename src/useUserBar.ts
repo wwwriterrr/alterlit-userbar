@@ -25,7 +25,7 @@ const MESSAGE_EVENTS = new Set(['new_message', 'remove_message', 'room_read', 'r
  * Данные блока: пользователь, баланс, непрочитанные сообщения и уведомления.
  * Счётчики живут от личного потока ws/chat/stream/: новое уведомление прибавляет 1,
  * прочтение или удаление приходит готовым числом, а на события чата счётчик
- * сообщений перезапрашивается.
+ * сообщений перезапрашивается. Баланс тоже приходит из потока готовыми числами.
  */
 export function useUserBar() {
   const [state, setState] = useState<UserBarState>({
@@ -65,6 +65,18 @@ export function useUserBar() {
       }
       if (event.type === 'notifications_count') {
         if (typeof event.unread === 'number') patch({ notifications: event.unread });
+        return;
+      }
+      // баланс приходит готовыми числами — литы и буки вместе
+      if (event.type === 'balance') {
+        const balance = event.balance as Balance | undefined;
+        if (balance && typeof balance.lits === 'number' && typeof balance.books === 'number') patch({ balance });
+        return;
+      }
+      // подробности — старому коду сайта (страницы финансов и оплаты), блоку хватает баланса
+      if (event.type === 'transaction' || event.type === 'pay_order') {
+        const { type, ...detail } = event;
+        window.dispatchEvent(new CustomEvent(type === 'transaction' ? 'alterlit:transaction' : 'alterlit:pay-order', { detail }));
         return;
       }
       if (!MESSAGE_EVENTS.has(event.type)) return;
@@ -120,6 +132,12 @@ export function useUserBar() {
     if (!counted) return;
     window.dispatchEvent(new CustomEvent('alterlit:unread', { detail: { messages, notifications } }));
   }, [counted, messages, notifications]);
+
+  // баланс — тоже наружу: на старых страницах сайта он выведен своими элементами
+  const { balance } = state;
+  useEffect(() => {
+    if (balance) window.dispatchEvent(new CustomEvent('alterlit:balance', { detail: balance }));
+  }, [balance]);
 
   /** Новые уведомления из сокета — для открытого окна. */
   const subscribe = useCallback((fn: NotificationListener) => {

@@ -83,28 +83,25 @@ export default function UserBar() {
       )}
 
       <div className={s.balanceRow}>
-        <a className={s.balance} href={links.finance()}>
+        <div className={s.balance}>
           <span className={s.balanceLabel}>На счету:</span>
-          <span className={s.amounts}>
-            {balance ? (
-              <>
-                <span className={s.lits} title="Литы">
-                  {money.format(balance.lits)}
-                  <IconLit className={s.litIcon} />
-                </span>
-                <span className={s.books} title="Буки">
-                  {money.format(balance.books)}
-                  <IconBook className={s.bookIcon} />
-                </span>
-              </>
-            ) : (
-              <>
-                <GhostAmount />
-                <GhostAmount />
-              </>
-            )}
-          </span>
-        </a>
+          {balance ? (
+            // литы и буки рядом через слэш — одна ссылка на финансы
+            <a className={s.amounts} href={links.finance()} title="Финансы">
+              <Amount className={s.lits} title="Литы" value={balance.lits}>
+                <IconLit className={s.litIcon} />
+              </Amount>
+              <span className={s.slash} aria-hidden="true">
+                /
+              </span>
+              <Amount className={s.books} title="Буки" value={balance.books}>
+                <IconBook className={s.bookIcon} />
+              </Amount>
+            </a>
+          ) : (
+            <GhostAmounts />
+          )}
+        </div>
         <a className={s.pay} href={links.pay()}>
           Пополнить
         </a>
@@ -169,6 +166,50 @@ function CounterLink({
   );
 }
 
+/** Меньше — шум округления, не изменение. */
+const MIN_DELTA = 0.005;
+
+/** Сумма на счету; при изменении (пополнение, списание) рядом ненадолго всплывает разница. */
+function Amount({
+  className,
+  title,
+  value,
+  children,
+}: {
+  className: string;
+  title: string;
+  value: number;
+  children: React.ReactNode;
+}) {
+  const prev = useRef(value);
+  const [delta, setDelta] = useState<{ value: number; key: number } | null>(null);
+  useEffect(() => {
+    const diff = value - prev.current;
+    prev.current = value;
+    if (Math.abs(diff) < MIN_DELTA) return;
+    setDelta((d) => ({ value: diff, key: (d?.key ?? 0) + 1 }));
+  }, [value]);
+
+  return (
+    <span className={className} title={title}>
+      {money.format(value)}
+      {children}
+      {delta && (
+        <span
+          key={delta.key}
+          className={s.delta}
+          data-sign={delta.value > 0 ? 'plus' : 'minus'}
+          aria-hidden="true"
+          onAnimationEnd={() => setDelta(null)}
+        >
+          {delta.value > 0 ? '+' : '−'}
+          {money.format(Math.abs(delta.value))}
+        </span>
+      )}
+    </span>
+  );
+}
+
 const AVATAR_COLORS = ['#254F23', '#C9861E', '#407BC8', '#B85454', '#5B48D1', '#2F8C9C', '#6B7F2A', '#8A5A3C'];
 
 function Avatar({ id, name, src }: { id: number; name: string; src: string | null }) {
@@ -225,10 +266,7 @@ function Skeleton({ failed }: { failed: boolean }) {
       <div className={s.balanceRow}>
         <div className={s.balance}>
           <span className={`${s.ghost} ${s.gLabel}`} />
-          <span className={s.amounts}>
-            <GhostAmount />
-            <GhostAmount />
-          </span>
+          <GhostAmounts />
         </div>
         <span className={`${s.ghost} ${s.gPay}`} />
       </div>
@@ -236,6 +274,12 @@ function Skeleton({ failed }: { failed: boolean }) {
   );
 }
 
-function GhostAmount() {
-  return <span className={`${s.ghost} ${s.gAmount}`} />;
+function GhostAmounts() {
+  return (
+    <span className={s.amounts}>
+      <span className={`${s.ghost} ${s.gAmount}`} />
+      <span className={s.slash}>/</span>
+      <span className={`${s.ghost} ${s.gAmount}`} />
+    </span>
+  );
 }

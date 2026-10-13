@@ -225,8 +225,8 @@ from blog.models import Room, Message
 @permission_classes([IsAuthenticated])
 def unread_count(request):
     user = request.user
-    # те же правила, что у unread_count в rooms_for: свои сообщения автор видит
-    # прочитанными (is_read.add при отправке), удалённые чаты не считаются;
+    # те же правила, что у unread_count в rooms_for: свои сообщения не считаем
+    # (как в legacy, отправителя в is_read нет), удалённые чаты не считаются;
     # exclude по M2M is_read даёт корректный NOT IN
     my_rooms = (Room.objects
                 .filter(members=user)
@@ -234,6 +234,7 @@ def unread_count(request):
                 .values('pk'))
     stats = (Message.objects
              .filter(room__in=my_rooms)
+             .exclude(sender=user)
              .exclude(is_read=user)
              .aggregate(unread=Count('pk'), rooms=Count('room', distinct=True)))
     return Response(stats)

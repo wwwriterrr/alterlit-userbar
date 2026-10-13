@@ -1,9 +1,11 @@
-import type { SiteNotification } from './api';
+import type { Balance, SiteNotification } from './api';
 
 /** События личного потока ws/chat/stream/, которые интересны блоку пользователя. */
 export type StreamEvent =
   | { type: 'new_notification'; notification: SiteNotification }
   | { type: 'notifications_count'; unread: number }
+  | { type: 'balance'; balance: Balance }
+  | { type: 'transaction' | 'pay_order'; [key: string]: unknown }
   | { type: 'new_message'; room_id: number; message_data?: { sender_id: number } }
   | { type: 'remove_message' | 'room_read' | 'room_deleted' | 'room_restored'; room_id: number }
   | { type: string; [key: string]: unknown };
