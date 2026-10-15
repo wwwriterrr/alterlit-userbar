@@ -73,6 +73,13 @@ export function useUserBar() {
         if (balance && typeof balance.lits === 'number' && typeof balance.books === 'number') patch({ balance });
         return;
       }
+      // лента «последние комментарии» изменилась — острову ленты в сайдбаре (без своего сокета)
+      if (event.type === 'side_comments') {
+        const { type, ...detail } = event;
+        void type;
+        window.dispatchEvent(new CustomEvent('alterlit:side-comments', { detail }));
+        return;
+      }
       // подробности — старому коду сайта (страницы финансов и оплаты), блоку хватает баланса
       if (event.type === 'transaction' || event.type === 'pay_order') {
         const { type, ...detail } = event;
