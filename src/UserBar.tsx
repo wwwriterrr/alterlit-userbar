@@ -37,6 +37,13 @@ export default function UserBar() {
     bellRef.current?.focus();
   }, []);
 
+  // красная точка на кнопке мобильного меню сайта (#mob-menu-btn.unread) — как в старом блоке:
+  // есть непрочитанные сообщения или уведомления — класс стоит, всё прочитано — снимается
+  const unread = status === 'ready' && messages + notifications > 0;
+  useEffect(() => {
+    document.getElementById('mob-menu-btn')?.classList.toggle('unread', unread);
+  }, [unread]);
+
   if (status === 'anon') return null;
   if (status !== 'ready' || !me) return <Skeleton failed={status === 'error'} />;
 
