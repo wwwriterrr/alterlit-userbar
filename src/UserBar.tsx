@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { IconBell, IconBook, IconLit, IconMessages } from './Icons';
+import { IconBell, IconBook, IconLit, IconMessages, IconPlus } from './Icons';
 import { links } from './links';
 import NotificationsPanel from './NotificationsPanel';
 import { useUserBar } from './useUserBar';
@@ -108,6 +108,12 @@ export default function UserBar() {
           Пополнить
         </a>
       </div>
+
+      {/* как #write в старом блоке пользователя */}
+      <a className={s.write} href={links.newPost()}>
+        <IconPlus />
+        <span>Добавить публикацию</span>
+      </a>
     </div>
   );
 }
@@ -278,6 +284,7 @@ function Skeleton({ failed }: { failed: boolean }) {
         </div>
         <span className={`${s.ghost} ${s.gPay}`} />
       </div>
+      <span className={`${s.ghost} ${s.gWrite}`} />
     </div>
   );
 }

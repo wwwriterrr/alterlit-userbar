@@ -1,4 +1,13 @@
-// Иконки сайта alterlit.ru: сообщения, уведомления, лита, бук, значок администрации.
+// Иконки сайта alterlit.ru: сообщения, уведомления, лита, бук, значок администрации, «+».
+
+/** «+» кнопки «Добавить публикацию» (как у #write в старом блоке) */
+export function IconPlus() {
+  return (
+    <svg viewBox="0 0 25 25" aria-hidden="true">
+      <path fill="currentColor" d="M8.95996 0V8.95996H0V16.04H8.95996V25H16.04V16.04H25V8.95996H16.04V0H8.95996Z" />
+    </svg>
+  );
+}
 
 export function IconMessages() {
   return (

@@ -15,4 +15,5 @@ export const links = {
   logout: () => u('/logout/'),
   finance: () => u('/finance/'),
   pay: () => u('/pay/?currency=lits'),
+  newPost: () => u('/post/new/'),
 };
