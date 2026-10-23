@@ -10,8 +10,8 @@ const u = (path: string) => site + path;
 export const links = {
   profile: (username: string) => u(`/profile/${encodeURIComponent(username)}/`),
   notifications: (username: string) => u(`/profile/${encodeURIComponent(username)}/?page=notifications`),
-  // пока — старая страница сообщений; новый чат живёт на /messenger/
-  messages: () => u('/messages/all/'),
+  // сообщения: администрации — новый чат (/messenger/), остальным пока старая страница
+  messages: (isStaff = false) => u(isStaff ? '/messenger/' : '/messages/all/'),
   logout: () => u('/logout/'),
   finance: () => u('/finance/'),
   pay: () => u('/pay/?currency=lits'),
