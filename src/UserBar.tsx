@@ -61,7 +61,7 @@ export default function UserBar() {
             {badge && <AdminBadge kind={badge} />}
           </a>
           <div className={s.controls}>
-            <CounterLink href={links.messages(me.is_staff)} count={messages} label="Сообщения" forms={UNREAD_MESSAGES}>
+            <CounterLink href={links.messages()} count={messages} label="Сообщения" forms={UNREAD_MESSAGES}>
               <IconMessages />
             </CounterLink>
             <CounterLink
