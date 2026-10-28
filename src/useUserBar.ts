@@ -61,6 +61,8 @@ export function useUserBar() {
         const n = event.notification as SiteNotification | undefined;
         if (n && !n.is_read && alive) setState((s) => ({ ...s, notifications: s.notifications + 1 }));
         if (n) listeners.current.forEach((fn) => fn(n));
+        // странице уведомлений (/notifications/) — без своего сокета: она добавит его в ленту
+        if (n) window.dispatchEvent(new CustomEvent('alterlit:notification', { detail: n }));
         return;
       }
       if (event.type === 'notifications_count') {
